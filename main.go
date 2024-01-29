@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"os/exec"
 	"strings"
@@ -10,22 +10,52 @@ import (
 )
 
 func transform(ctx *gin.Context) {
-	cmd := exec.Command("primitive", strings.Fields("-i res/input.png -o res/output.png -n 250 -m 0")...)
-	err := cmd.Run()
+	file, err := ctx.FormFile("input_file")
 
 	if err != nil {
-		fmt.Println("Err: ", err)
+		log.Println(err)
+
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "Err !!",
+		})
+
+		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": "Done !!",
+	n := ctx.PostForm("cnt")
+	m := ctx.PostForm("types")
+
+	log.Println(file.Filename, n, m)
+
+	ctx.SaveUploadedFile(file, "res/"+file.Filename)
+
+	cmd := exec.Command("primitive", strings.Fields("-i res/"+file.Filename+" -o res/output.jpg -n "+n+" -m "+m)...)
+	err = cmd.Run()
+
+	if err != nil {
+		log.Println("Err: ", err)
+	}
+
+	// ctx.File("res/output.jpg")
+
+	ctx.HTML(http.StatusOK, "home.html", gin.H{
+		"output": "res/output.jpg",
 	})
 }
 
 func main() {
 	router := gin.Default()
+	router.LoadHTMLGlob("templates/home.html")
 
-	router.GET("/transform", func(ctx *gin.Context) {
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "home.html", nil)
+	})
+
+	router.GET("/res/output.jpg", func(ctx *gin.Context) {
+		ctx.File("res/output.jpg")
+	})
+
+	router.POST("/transform", func(ctx *gin.Context) {
 		transform(ctx)
 	})
 
