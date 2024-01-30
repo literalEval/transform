@@ -10,7 +10,7 @@
 <body>
     <form id="input_form" method="post" action="/transform" enctype="multipart/form-data">
         <input type="file" id="inpt" name="input_file">
-        <input name="cnt" type="number" min="1" max="800">
+        <input name="cnt" type="number" min="1" max="300" value="10">
         <!-- <select name="types" size="1" multiple>
             <option value="combo">Combo</option>
             <option value="triangle">Triangle</option>
@@ -22,7 +22,7 @@
             <option value="rotated_eclipse">Rotated Eclipse</option>
             <option value="polygon">Polygon</option>
         </select> -->
-        <input name="types" list="type">
+        <input name="types" list="type" value="Triangle">
         <datalist id="type">
             <option value="Combo">
             <option value="Triangle">
