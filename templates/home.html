@@ -8,15 +8,59 @@
 </head>
 
 <body>
-    <form id="inp" method="post" action="/transform" enctype="multipart/form-data">
+    <form id="input_form" method="post" action="/transform" enctype="multipart/form-data">
         <input type="file" id="inpt" name="input_file">
         <input name="cnt" type="number" min="1" max="800">
-        <input name="types" type="number" min="0" max="10">
+        <!-- <select name="types" size="1" multiple>
+            <option value="combo">Combo</option>
+            <option value="triangle">Triangle</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="ellipse">Ellipse</option>
+            <option value="circle">Circle</option>
+            <option value="rotate_direct">Rotate Direct</option>
+            <option value="beziers">Beziers</option>
+            <option value="rotated_eclipse">Rotated Eclipse</option>
+            <option value="polygon">Polygon</option>
+        </select> -->
+        <input name="types" list="type">
+        <datalist id="type">
+            <option value="Combo">
+            <option value="Triangle">
+            <option value="Rectangle">
+            <option value="Ellipse">
+            <option value="Circle">
+            <option value="Rotate Direct">
+            <option value="Beziers">
+            <option value="Rotated Eclipse">
+            <option value="Polygon">
+        </datalist>
         <button type="submit">
             Upload
         </button>
     </form>
-    <img src="{{ .output }}">
+
+    <div class="images">
+        <img src="{{ .input }}">
+        <img src="{{ .output }}">
+    </div>
+
+    <style>
+        .images {
+            display: flex;
+            flex-direction: row;
+
+            width: 100vw;
+        }
+
+        .images img {
+            width: 45vw;
+        }
+    </style>
+
+    <script>
+        const inputForm = document.getElementById("input_form")
+        const inputImg = document.getElementById("input_img")
+    </script>
 </body>
 
 </html>

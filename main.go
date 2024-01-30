@@ -9,6 +9,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func getM(strm string) string {
+	str_m := map[string]string{
+		"Combo":           "0",
+		"Triangle":        "1",
+		"Rectangle":       "2",
+		"Ellipse":         "3",
+		"Circle":          "4",
+		"Rotate Direct":   "5",
+		"Beziers":         "6",
+		"Rotated Eclipse": "7",
+		"Polygon":         "8",
+		"":                "0",
+	}
+
+	return str_m[strm]
+}
+
 func transform(ctx *gin.Context) {
 	file, err := ctx.FormFile("input_file")
 
@@ -23,11 +40,11 @@ func transform(ctx *gin.Context) {
 	}
 
 	n := ctx.PostForm("cnt")
-	m := ctx.PostForm("types")
+	m := getM(ctx.PostForm("types"))
 
 	log.Println(file.Filename, n, m)
 
-	ctx.SaveUploadedFile(file, "res/"+file.Filename)
+	ctx.SaveUploadedFile(file, "res/input.jpg")
 
 	cmd := exec.Command("primitive", strings.Fields("-i res/"+file.Filename+" -o res/output.jpg -n "+n+" -m "+m)...)
 	err = cmd.Run()
@@ -36,23 +53,23 @@ func transform(ctx *gin.Context) {
 		log.Println("Err: ", err)
 	}
 
-	// ctx.File("res/output.jpg")
 
 	ctx.HTML(http.StatusOK, "home.html", gin.H{
-		"output": "res/output.jpg",
+		"input":  "input.jpg",
+		"output": "output.jpg",
 	})
 }
 
 func main() {
 	router := gin.Default()
+
 	router.LoadHTMLGlob("templates/home.html")
+
+	router.StaticFile("input.jpg", "res/input.jpg")
+	router.StaticFile("output.jpg", "res/output.jpg")
 
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "home.html", nil)
-	})
-
-	router.GET("/res/output.jpg", func(ctx *gin.Context) {
-		ctx.File("res/output.jpg")
 	})
 
 	router.POST("/transform", func(ctx *gin.Context) {
