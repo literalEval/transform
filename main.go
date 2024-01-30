@@ -46,7 +46,7 @@ func transform(ctx *gin.Context) {
 
 	ctx.SaveUploadedFile(file, "res/input.jpg")
 
-	cmd := exec.Command("primitive", strings.Fields("-i res/"+file.Filename+" -o res/output.jpg -n "+n+" -m "+m)...)
+	cmd := exec.Command("primitive", strings.Fields("-i res/input.jpg -o res/output.jpg -n "+n+" -m "+m)...)
 	err = cmd.Run()
 
 	if err != nil {
